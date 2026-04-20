@@ -1,0 +1,21 @@
+# pdftools 核心依赖
+
+# PDF 处理
+PyMuPDF>=1.23.0
+
+# 图像处理
+Pillow>=10.0.0
+opencv-python>=4.8.0
+scikit-image>=0.22.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+
+# 翻译
+openai>=1.0.0
+deep-translator>=1.11.0
+
+# 配置
+pyyaml>=6.0
+
+# OCR（可选）
+# pytesseract>=0.3.10

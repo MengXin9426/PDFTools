@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Output
+output/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config secrets (keep config.yaml.example in repo)
+# config.yaml
+
+# Models (large binary files)
+PDF-Extract-Kit/models/
+LaTeX-OCR/checkpoints/
+
+# Archive (legacy files)
+archive/

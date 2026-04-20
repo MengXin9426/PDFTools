@@ -1,0 +1,67 @@
+# pdftools 配置文件
+# API 密钥优先使用环境变量，勿将含密钥的 config.yaml 提交到公开仓库。
+
+# =============================================
+# 翻译后端选择：  "qwen" | "vllm"
+# =============================================
+translate_backend: "qwen"
+
+# API 配置
+api:
+  qwen:
+    api_key: ""                  # 可被环境变量 QWEN_API_KEY 覆盖
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    ocr_model: "qwen-vl-ocr"    # OCR 用模型
+    translate_model: "qwen-plus" # 翻译/增强用模型
+    timeout: 60
+    max_retries: 3
+
+  vllm:
+    api_key: "EMPTY"             # vLLM 默认无鉴权，填 EMPTY 即可
+    base_url: "http://192.168.2.111:8000/v1"  # 本地 vLLM 服务地址
+    model: "/home/a7532/Checkpoints/Qwen3.5-35B-A3B-FP8"    # 模型名需与 vLLM 启动时一致
+    timeout: 120
+    max_retries: 3
+
+# 版面检测模型
+layout_detector:
+  # 本地权重路径（优先级最高，设为空则自动从 weights_dir 搜索或下载）
+  local_path: "models/models--juliozhao--DocLayout-YOLO-DocStructBench/snapshots/8c3299a30b8ff29a1503c4431b035b93220f7b11/doclayout_yolo_docstructbench_imgsz1024.pt"
+  model_repo: "juliozhao/DocLayout-YOLO-DocStructBench"
+  model_file: "doclayout_yolo_docstructbench_imgsz1024.pt"
+  weights_dir: "models"          # 模型权重存放目录（相对于项目根目录）
+  hf_mirror: "https://hf-mirror.com"
+  device: "cpu"
+  confidence: 0.3
+
+# 翻译配置
+translation:
+  fallback_enabled: true
+  batch_size: 10
+  enable_cache: false
+
+# LaTeX 构建 / 排版
+latex:
+  compiler: "xelatex"
+  timeout: 300
+  encoding: "utf-8"
+  class: "article"
+  # 排版模式：
+  #   "twocolumn"    — 强制双栏
+  #   "onecolumn"    — 强制单栏
+  #   "auto"         — 先双栏编译，溢出严重自动切换单栏（默认）
+  layout: "auto"
+  # auto 模式阈值：严重溢出（>80pt）超过此数则切换单栏
+  auto_layout_severe_threshold: 80
+  auto_layout_max_severe: 15
+
+# 质量检查
+quality:
+  enable_ssim: true
+  enable_cosine: true
+  dpi: 150
+
+# 日志配置
+logging:
+  level: "INFO"
+  file: "output/logs/pipeline.log"

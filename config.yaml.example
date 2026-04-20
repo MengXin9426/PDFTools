@@ -1,0 +1,61 @@
+# PDFTools 配置文件示例
+# 复制此文件为 config.yaml 并填入您的 API 密钥
+
+# =============================================
+# 翻译后端选择：  "qwen" | "vllm"
+# =============================================
+translate_backend: "qwen"
+
+# API 配置
+api:
+  qwen:
+    api_key: "your-qwen-api-key-here"  # 请替换为您的 Qwen API 密钥
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    ocr_model: "qwen-vl-ocr"
+    translate_model: "qwen-plus"
+    timeout: 60
+    max_retries: 3
+
+  vllm:
+    api_key: "EMPTY"
+    base_url: "http://localhost:8000/v1"  # 本地 vLLM 服务地址
+    model: "qwen/Qwen2.5-7B-Instruct"   # 模型路径
+    timeout: 120
+    max_retries: 3
+
+# 版面检测模型
+layout_detector:
+  local_path: ""  # 留空将自动下载
+  model_repo: "juliozhao/DocLayout-YOLO-DocStructBench"
+  model_file: "doclayout_yolo_docstructbench_imgsz1024.pt"
+  weights_dir: "models"
+  hf_mirror: "https://hf-mirror.com"
+  device: "cpu"  # 或 "cuda" 如果有 GPU
+  confidence: 0.3
+
+# 翻译配置
+translation:
+  fallback_enabled: true
+  batch_size: 10
+  enable_cache: false
+
+# LaTeX 构建配置
+latex:
+  compiler: "xelatex"  # 或 "tectonic"
+  timeout: 300
+  encoding: "utf-8"
+  class: "article"
+  layout: "auto"  # "auto" | "twocolumn" | "onecolumn"
+  auto_layout_severe_threshold: 80
+  auto_layout_max_severe: 15
+
+# 质量检查
+quality:
+  enable_ssim: true
+  enable_cosine: true
+  dpi: 150
+
+# 日志配置
+logging:
+  level: "INFO"
+  file: "output/logs/pipeline.log"

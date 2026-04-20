@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "pdftools"
+version = "3.0.0"
+description = "英文学术 PDF 自动翻译工具：提取 → 分块 → Qwen 大模型翻译 → LaTeX 编译"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "spikebai"},
+]
+keywords = ["pdf", "translation", "qwen", "latex", "academic"]
+
+dependencies = [
+    "PyMuPDF>=1.23.0",
+    "Pillow>=10.0.0",
+    "openai>=1.0.0",
+    "deep-translator>=1.11.0",
+    "pyyaml>=6.0",
+    "numpy>=1.24.0",
+    "opencv-python>=4.8.0",
+    "scikit-image>=0.22.0",
+    "scikit-learn>=1.3.0",
+]
+
+[project.optional-dependencies]
+ocr = ["pytesseract>=0.3.10"]
+latex-ocr = ["pix2tex"]
+dev = ["pytest>=7.0", "ruff>=0.4.0"]
+
+[project.scripts]
+pdftools = "pipeline_test:main"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.setuptools.packages.find]
+include = ["skills*"]

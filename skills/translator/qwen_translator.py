@@ -148,7 +148,16 @@ class QwenTranslator:
     def translate_chunks(self, chunks: List[Dict]) -> List[Dict]:
         print(f"\n使用 {self.qwen.backend.upper()} 后端翻译...")
         total = len(chunks)
+        # 计算总待翻译字符数
+        total_chars = 0
+        for chunk in chunks:
+            ext = self._extract_translatable(chunk)
+            if ext:
+                text, _ = ext
+                total_chars += len(text)
+        print(f"总段数: {total}, 总待翻译字符数: {total_chars}")
 
+        processed_chars = 0
         pending_indices: List[int] = []
         pending_texts: List[str] = []
         pending_types: List[str] = []
@@ -157,7 +166,7 @@ class QwenTranslator:
         translated_chunks: List[Dict] = [None] * total  # type: ignore
 
         def _flush_batch():
-            nonlocal pending_indices, pending_texts, pending_types, pending_char_count
+            nonlocal pending_indices, pending_texts, pending_types, pending_char_count, processed_chars
             if not pending_texts:
                 return
             n = len(pending_texts)
@@ -196,11 +205,21 @@ class QwenTranslator:
                         line_idx += n_lines
                     translated_chunks[idx] = {"type": "text_group", "chunks": translated_group}
 
-            print(f"  ✓ 批量完成 {n} 段")
-            pending_indices = []
-            pending_texts = []
-            pending_types = []
-            pending_char_count = 0
+                    print(f"  ✓ 批量完成 {n} 段")
+                    # 累加已处理字符数并显示进度条
+                    nonlocal processed_chars
+                    batch_char_sum = sum(len(t) for t in pending_texts)
+                    processed_chars += batch_char_sum
+                    percent = processed_chars / total_chars if total_chars > 0 else 0
+                    bar_len = 40
+                    filled = int(bar_len * percent)
+                    bar = "█" * filled + "░" * (bar_len - filled)
+                    print(f"  进度: |{bar}| {percent*100:.1f}% ({processed_chars}/{total_chars} 字符)")
+
+                    pending_indices.clear()
+                    pending_texts.clear()
+                    pending_types.clear()
+                    pending_char_count = 0
 
         for i, chunk in enumerate(chunks):
             ctype = chunk.get("type", "")
@@ -233,7 +252,13 @@ class QwenTranslator:
             pending_char_count += text_len
 
         _flush_batch()
-
+        # 最终100%进度条（确保显示）
+        if total_chars > 0:
+            bar_len = 40
+            filled = bar_len
+            bar = "█" * filled
+            print(f"  进度: |{bar}| 100.0% ({total_chars}/{total_chars} 字符)")
+        
         result_chunks = [c for c in translated_chunks if c is not None]
         skipped = total - len(result_chunks)
         if skipped:
